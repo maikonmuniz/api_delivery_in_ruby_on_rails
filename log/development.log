@@ -1,0 +1,321 @@
+  [1m[35m (6.9ms)[0m  [1m[34mSELECT sqlite_version(*)[0m
+  [1m[35m (0.1ms)[0m  [1m[34mSELECT sqlite_version(*)[0m
+  [1m[35m (1.0ms)[0m  [1m[34mSELECT sqlite_version(*)[0m
+  [1m[35m (7.5ms)[0m  [1m[35mCREATE TABLE "schema_migrations" ("version" varchar NOT NULL PRIMARY KEY)[0m
+  [1m[35m (5.9ms)[0m  [1m[35mCREATE TABLE "ar_internal_metadata" ("key" varchar NOT NULL PRIMARY KEY, "value" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL)[0m
+  [1m[35m (0.5ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Migrating to CreateCategories (20211022005327)
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[36mbegin transaction[0m
+  [1m[35m (6.6ms)[0m  [1m[35mCREATE TABLE "categories" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "title" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL)[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.4ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES (?)[0m  [["version", "20211022005327"]]
+  [1m[36mTRANSACTION (7.1ms)[0m  [1m[36mcommit transaction[0m
+Migrating to CreateRestaurants (20211022010220)
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[36mbegin transaction[0m
+  [1m[35m (3.0ms)[0m  [1m[35mCREATE TABLE "restaurants" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar, "description" text, "delivery_tax" float, "city" varchar, "street" varchar, "neighborhood" varchar, "number" varchar, "complement" varchar, "category_id" integer NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_08f808c5fb"
+FOREIGN KEY ("category_id")
+  REFERENCES "categories" ("id")
+)[0m
+  [1m[35m (0.8ms)[0m  [1m[35mCREATE INDEX "index_restaurants_on_category_id" ON "restaurants" ("category_id")[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.4ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES (?)[0m  [["version", "20211022010220"]]
+  [1m[36mTRANSACTION (4.5ms)[0m  [1m[36mcommit transaction[0m
+Migrating to CreateProductCategories (20211022010743)
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[36mbegin transaction[0m
+  [1m[35m (4.9ms)[0m  [1m[35mCREATE TABLE "product_categories" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "title" varchar, "restaurant_id" integer NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_15a29c3a40"
+FOREIGN KEY ("restaurant_id")
+  REFERENCES "restaurants" ("id")
+)[0m
+  [1m[35m (0.4ms)[0m  [1m[35mCREATE INDEX "index_product_categories_on_restaurant_id" ON "product_categories" ("restaurant_id")[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.4ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES (?)[0m  [["version", "20211022010743"]]
+  [1m[36mTRANSACTION (14.8ms)[0m  [1m[36mcommit transaction[0m
+Migrating to CreateOrders (20211022012835)
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[36mbegin transaction[0m
+  [1m[35m (2.6ms)[0m  [1m[35mCREATE TABLE "orders" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar, "phone_number" varchar, "total_value" float, "city" varchar, "neighborhood" varchar, "number" varchar, "complement" varchar, "status" integer DEFAULT 0, "restaurant_id" integer NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_9af093cac8"
+FOREIGN KEY ("restaurant_id")
+  REFERENCES "restaurants" ("id")
+)[0m
+  [1m[35m (0.5ms)[0m  [1m[35mCREATE INDEX "index_orders_on_restaurant_id" ON "orders" ("restaurant_id")[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.4ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES (?)[0m  [["version", "20211022012835"]]
+  [1m[36mTRANSACTION (4.5ms)[0m  [1m[36mcommit transaction[0m
+Migrating to CreateOrderProducts (20211022014318)
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[36mbegin transaction[0m
+  [1m[35m (4.9ms)[0m  [1m[35mCREATE TABLE "order_products" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "quantity" integer, "order_id" integer NOT NULL, "product_id" integer NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_f40b8ccee4"
+FOREIGN KEY ("order_id")
+  REFERENCES "orders" ("id")
+, CONSTRAINT "fk_rails_96c0709f78"
+FOREIGN KEY ("product_id")
+  REFERENCES "products" ("id")
+)[0m
+  [1m[35m (0.4ms)[0m  [1m[35mCREATE INDEX "index_order_products_on_order_id" ON "order_products" ("order_id")[0m
+  [1m[35m (0.4ms)[0m  [1m[35mCREATE INDEX "index_order_products_on_product_id" ON "order_products" ("product_id")[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.4ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES (?)[0m  [["version", "20211022014318"]]
+  [1m[36mTRANSACTION (4.6ms)[0m  [1m[36mcommit transaction[0m
+Migrating to CreateProducts (20211022015614)
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[36mbegin transaction[0m
+  [1m[35m (1.9ms)[0m  [1m[35mCREATE TABLE "products" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar, "description" text, "price" float, "product_category_id" integer NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_efe167855e"
+FOREIGN KEY ("product_category_id")
+  REFERENCES "product_categories" ("id")
+)[0m
+  [1m[35m (0.7ms)[0m  [1m[35mCREATE INDEX "index_products_on_product_category_id" ON "products" ("product_category_id")[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.4ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES (?)[0m  [["version", "20211022015614"]]
+  [1m[36mTRANSACTION (6.0ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.8ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = ? LIMIT ?[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mActiveRecord::InternalMetadata Create (1.7ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES (?, ?, ?, ?)[0m  [["key", "environment"], ["value", "development"], ["created_at", "2021-10-22 02:24:46.952666"], ["updated_at", "2021-10-22 02:24:46.952666"]]
+  [1m[36mTRANSACTION (4.5ms)[0m  [1m[36mcommit transaction[0m
+  [1m[35m (0.1ms)[0m  [1m[34mSELECT sqlite_version(*)[0m
+  [1m[35m (0.4ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (16.6ms)[0m  [1m[34mSELECT sqlite_version(*)[0m
+  [1m[35m (1.9ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Migrating to CreateActiveStorageTables (20211022040903)
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[36mbegin transaction[0m
+  [1m[35m (1.2ms)[0m  [1m[35mCREATE TABLE "active_storage_blobs" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "key" varchar NOT NULL, "filename" varchar NOT NULL, "content_type" varchar, "metadata" text, "service_name" varchar NOT NULL, "byte_size" bigint NOT NULL, "checksum" varchar NOT NULL, "created_at" datetime NOT NULL)[0m
+  [1m[35m (0.2ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_active_storage_blobs_on_key" ON "active_storage_blobs" ("key")[0m
+  [1m[35m (0.3ms)[0m  [1m[35mCREATE TABLE "active_storage_attachments" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar NOT NULL, "record_type" varchar NOT NULL, "record_id" integer NOT NULL, "blob_id" integer NOT NULL, "created_at" datetime NOT NULL, CONSTRAINT "fk_rails_c3b3935057"
+FOREIGN KEY ("blob_id")
+  REFERENCES "active_storage_blobs" ("id")
+)[0m
+  [1m[35m (0.4ms)[0m  [1m[35mCREATE INDEX "index_active_storage_attachments_on_blob_id" ON "active_storage_attachments" ("blob_id")[0m
+  [1m[35m (0.2ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_active_storage_attachments_uniqueness" ON "active_storage_attachments" ("record_type", "record_id", "name", "blob_id")[0m
+  [1m[35m (0.3ms)[0m  [1m[35mCREATE TABLE "active_storage_variant_records" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "blob_id" integer NOT NULL, "variation_digest" varchar NOT NULL, CONSTRAINT "fk_rails_993965df05"
+FOREIGN KEY ("blob_id")
+  REFERENCES "active_storage_blobs" ("id")
+)[0m
+  [1m[35m (0.3ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_active_storage_variant_records_uniqueness" ON "active_storage_variant_records" ("blob_id", "variation_digest")[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.2ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES (?)[0m  [["version", "20211022040903"]]
+  [1m[36mTRANSACTION (6.2ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.3ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = ? LIMIT ?[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[35m (0.1ms)[0m  [1m[34mSELECT sqlite_version(*)[0m
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Started GET "/" for 127.0.0.1 at 2021-10-22 01:39:30 -0300
+  [1m[35m (0.7ms)[0m  [1m[34mSELECT sqlite_version(*)[0m
+  [1m[35m (0.3ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Processing by Rails::WelcomeController#index as HTML
+  Rendering C:/Ruby30-x64/lib/ruby/gems/3.0.0/gems/railties-6.1.4.1/lib/rails/templates/rails/welcome/index.html.erb
+  Rendered C:/Ruby30-x64/lib/ruby/gems/3.0.0/gems/railties-6.1.4.1/lib/rails/templates/rails/welcome/index.html.erb (Duration: 51.0ms | Allocations: 547)
+Completed 200 OK in 178ms (Views: 96.1ms | ActiveRecord: 0.0ms | Allocations: 4651)
+
+
+Started GET "/favicon.ico" for 127.0.0.1 at 2021-10-22 01:39:30 -0300
+  
+ActionController::RoutingError (No route matches [GET] "/favicon.ico"):
+  
+Started GET "/" for 127.0.0.1 at 2021-10-22 01:40:00 -0300
+Processing by Rails::WelcomeController#index as HTML
+  Rendering C:/Ruby30-x64/lib/ruby/gems/3.0.0/gems/railties-6.1.4.1/lib/rails/templates/rails/welcome/index.html.erb
+  Rendered C:/Ruby30-x64/lib/ruby/gems/3.0.0/gems/railties-6.1.4.1/lib/rails/templates/rails/welcome/index.html.erb (Duration: 9.9ms | Allocations: 212)
+Completed 200 OK in 16ms (Views: 12.6ms | Allocations: 1018)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-22 01:40:03 -0300
+Processing by Rails::WelcomeController#index as HTML
+  Rendering C:/Ruby30-x64/lib/ruby/gems/3.0.0/gems/railties-6.1.4.1/lib/rails/templates/rails/welcome/index.html.erb
+  Rendered C:/Ruby30-x64/lib/ruby/gems/3.0.0/gems/railties-6.1.4.1/lib/rails/templates/rails/welcome/index.html.erb (Duration: 0.5ms | Allocations: 8)
+Completed 200 OK in 5ms (Views: 4.4ms | Allocations: 333)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-22 01:40:23 -0300
+  [1m[35m (0.9ms)[0m  [1m[34mSELECT sqlite_version(*)[0m
+  [1m[35m (0.3ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Processing by Rails::WelcomeController#index as HTML
+  Rendering C:/Ruby30-x64/lib/ruby/gems/3.0.0/gems/railties-6.1.4.1/lib/rails/templates/rails/welcome/index.html.erb
+  Rendered C:/Ruby30-x64/lib/ruby/gems/3.0.0/gems/railties-6.1.4.1/lib/rails/templates/rails/welcome/index.html.erb (Duration: 6.5ms | Allocations: 422)
+Completed 200 OK in 24ms (Views: 11.6ms | ActiveRecord: 0.0ms | Allocations: 3315)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-22 23:30:28 -0300
+  [1m[35m (25.3ms)[0m  [1m[34mSELECT sqlite_version(*)[0m
+  [1m[35m (0.5ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Processing by Rails::WelcomeController#index as HTML
+  Rendering C:/Ruby30-x64/lib/ruby/gems/3.0.0/gems/railties-6.1.4.1/lib/rails/templates/rails/welcome/index.html.erb
+  Rendered C:/Ruby30-x64/lib/ruby/gems/3.0.0/gems/railties-6.1.4.1/lib/rails/templates/rails/welcome/index.html.erb (Duration: 116.7ms | Allocations: 422)
+Completed 200 OK in 334ms (Views: 197.0ms | ActiveRecord: 0.0ms | Allocations: 3312)
+
+
+Started GET "/favicon.ico" for 127.0.0.1 at 2021-10-22 23:30:30 -0300
+  
+ActionController::RoutingError (No route matches [GET] "/favicon.ico"):
+  
+Started GET "/api/categories" for 127.0.0.1 at 2021-10-22 23:38:00 -0300
+Processing by CategoriesController#index as JSON
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT sqlite_version(*)[0m
+  ↳ app/controllers/categories_controller.rb:3:in `index'
+  Rendering categories/index.json.jbuilder
+  [1m[36mCategory Load (1.9ms)[0m  [1m[34mSELECT "categories".* FROM "categories" ORDER BY "categories"."title" ASC[0m
+  ↳ app/views/categories/index.json.jbuilder:1
+  Rendered categories/index.json.jbuilder (Duration: 21.4ms | Allocations: 797)
+Completed 200 OK in 221ms (Views: 23.5ms | ActiveRecord: 5.4ms | Allocations: 6212)
+
+
+  [1m[35m (16.6ms)[0m  [1m[34mSELECT sqlite_version(*)[0m
+  [1m[35m (0.3ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Migrating to AddStreetToOrder (20211024200652)
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[36mbegin transaction[0m
+  [1m[35m (2.4ms)[0m  [1m[35mALTER TABLE "orders" ADD "street" varchar[0m
+  [1m[36mActiveRecord::SchemaMigration Create (1.5ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES (?)[0m  [["version", "20211024200652"]]
+  [1m[36mTRANSACTION (4.8ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.4ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = ? LIMIT ?[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[35m (0.1ms)[0m  [1m[34mSELECT sqlite_version(*)[0m
+  [1m[35m (0.7ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Started GET "/api/categories" for ::1 at 2021-10-27 18:18:32 -0300
+  [1m[35m (12.6ms)[0m  [1m[34mSELECT sqlite_version(*)[0m
+  [1m[35m (0.6ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Processing by CategoriesController#index as JSON
+  Rendering categories/index.json.jbuilder
+  [1m[36mCategory Load (0.5ms)[0m  [1m[34mSELECT "categories".* FROM "categories" ORDER BY "categories"."title" ASC[0m
+  ↳ app/views/categories/index.json.jbuilder:1
+  Rendered categories/index.json.jbuilder (Duration: 38.4ms | Allocations: 968)
+Completed 200 OK in 319ms (Views: 105.3ms | ActiveRecord: 1.4ms | Allocations: 6107)
+
+
+Started GET "/api/categories" for ::1 at 2021-10-27 18:32:39 -0300
+Processing by CategoriesController#index as JSON
+  [1m[35m (0.1ms)[0m  [1m[34mSELECT sqlite_version(*)[0m
+  ↳ app/controllers/categories_controller.rb:3:in `index'
+  Rendering categories/index.json.jbuilder
+  [1m[36mCategory Load (1.0ms)[0m  [1m[34mSELECT "categories".* FROM "categories" ORDER BY "categories"."title" ASC[0m
+  ↳ app/views/categories/index.json.jbuilder:1
+  Rendered categories/index.json.jbuilder (Duration: 4.7ms | Allocations: 502)
+Completed 200 OK in 16ms (Views: 6.9ms | ActiveRecord: 1.9ms | Allocations: 1274)
+
+
+Started GET "/api/categories" for ::1 at 2021-10-27 18:34:14 -0300
+Processing by CategoriesController#index as JSON
+  Rendering categories/index.json.jbuilder
+  [1m[36mCategory Load (0.4ms)[0m  [1m[34mSELECT "categories".* FROM "categories" ORDER BY "categories"."title" ASC[0m
+  ↳ app/views/categories/index.json.jbuilder:1
+  Rendered categories/index.json.jbuilder (Duration: 3.7ms | Allocations: 493)
+Completed 200 OK in 7ms (Views: 5.1ms | ActiveRecord: 0.4ms | Allocations: 723)
+
+
+Started GET "/api/categories" for ::1 at 2021-10-27 18:34:21 -0300
+Processing by CategoriesController#index as JSON
+  Rendering categories/index.json.jbuilder
+  [1m[36mCategory Load (0.4ms)[0m  [1m[34mSELECT "categories".* FROM "categories" ORDER BY "categories"."title" ASC[0m
+  ↳ app/views/categories/index.json.jbuilder:1
+  Rendered categories/index.json.jbuilder (Duration: 3.5ms | Allocations: 493)
+Completed 200 OK in 8ms (Views: 5.3ms | ActiveRecord: 0.4ms | Allocations: 722)
+
+
+Started GET "/api/categories" for ::1 at 2021-10-27 18:43:51 -0300
+Processing by CategoriesController#index as JSON
+  [1m[35m (0.1ms)[0m  [1m[34mSELECT sqlite_version(*)[0m
+  ↳ app/controllers/categories_controller.rb:3:in `index'
+  Rendering categories/index.json.jbuilder
+  [1m[36mCategory Load (0.7ms)[0m  [1m[34mSELECT "categories".* FROM "categories" ORDER BY "categories"."title" ASC[0m
+  ↳ app/views/categories/index.json.jbuilder:1
+  Rendered categories/index.json.jbuilder (Duration: 23.0ms | Allocations: 503)
+Completed 200 OK in 49ms (Views: 25.9ms | ActiveRecord: 2.1ms | Allocations: 1189)
+
+
+Started GET "/api/categories" for ::1 at 2021-10-27 18:45:04 -0300
+Processing by CategoriesController#index as JSON
+  Rendering categories/index.json.jbuilder
+  [1m[36mCategory Load (0.4ms)[0m  [1m[34mSELECT "categories".* FROM "categories" ORDER BY "categories"."title" ASC[0m
+  ↳ app/views/categories/index.json.jbuilder:1
+  Rendered categories/index.json.jbuilder (Duration: 3.7ms | Allocations: 486)
+Completed 200 OK in 6ms (Views: 5.1ms | ActiveRecord: 0.4ms | Allocations: 705)
+
+
+Started GET "/api/categories" for ::1 at 2021-10-27 18:45:11 -0300
+Processing by CategoriesController#index as JSON
+  Rendering categories/index.json.jbuilder
+  [1m[36mCategory Load (0.6ms)[0m  [1m[34mSELECT "categories".* FROM "categories" ORDER BY "categories"."title" ASC[0m
+  ↳ app/views/categories/index.json.jbuilder:1
+  Rendered categories/index.json.jbuilder (Duration: 4.0ms | Allocations: 486)
+Completed 200 OK in 7ms (Views: 5.6ms | ActiveRecord: 0.6ms | Allocations: 705)
+
+
+Started GET "/api/categories" for ::1 at 2021-10-27 18:45:18 -0300
+Processing by CategoriesController#index as JSON
+  Rendering categories/index.json.jbuilder
+  [1m[36mCategory Load (0.7ms)[0m  [1m[34mSELECT "categories".* FROM "categories" ORDER BY "categories"."title" ASC[0m
+  ↳ app/views/categories/index.json.jbuilder:1
+  Rendered categories/index.json.jbuilder (Duration: 6.8ms | Allocations: 486)
+Completed 200 OK in 10ms (Views: 8.5ms | ActiveRecord: 0.7ms | Allocations: 705)
+
+
+Started GET "/api/categories" for ::1 at 2021-10-27 18:45:30 -0300
+Processing by CategoriesController#index as JSON
+  Rendering categories/index.json.jbuilder
+  [1m[36mCategory Load (0.4ms)[0m  [1m[34mSELECT "categories".* FROM "categories" ORDER BY "categories"."title" ASC[0m
+  ↳ app/views/categories/index.json.jbuilder:1
+  Rendered categories/index.json.jbuilder (Duration: 4.2ms | Allocations: 486)
+Completed 200 OK in 7ms (Views: 5.7ms | ActiveRecord: 0.4ms | Allocations: 705)
+
+
+Started GET "/api/categories" for ::1 at 2021-10-27 18:46:39 -0300
+Processing by CategoriesController#index as JSON
+  Rendering categories/index.json.jbuilder
+  [1m[36mCategory Load (0.6ms)[0m  [1m[34mSELECT "categories".* FROM "categories" ORDER BY "categories"."title" ASC[0m
+  ↳ app/views/categories/index.json.jbuilder:1
+  Rendered categories/index.json.jbuilder (Duration: 6.1ms | Allocations: 486)
+Completed 200 OK in 9ms (Views: 7.7ms | ActiveRecord: 0.6ms | Allocations: 705)
+
+
+Started GET "/api/categories" for ::1 at 2021-10-27 18:56:13 -0300
+Processing by CategoriesController#index as JSON
+  [1m[35m (0.1ms)[0m  [1m[34mSELECT sqlite_version(*)[0m
+  ↳ app/controllers/categories_controller.rb:3:in `index'
+  Rendering categories/index.json.jbuilder
+  [1m[36mCategory Load (0.5ms)[0m  [1m[34mSELECT "categories".* FROM "categories" ORDER BY "categories"."title" ASC[0m
+  ↳ app/views/categories/index.json.jbuilder:1
+  Rendered categories/index.json.jbuilder (Duration: 3.6ms | Allocations: 500)
+Completed 200 OK in 13ms (Views: 6.8ms | ActiveRecord: 1.7ms | Allocations: 1170)
+
+
+Started GET "/api/categories" for ::1 at 2021-10-27 18:58:30 -0300
+Processing by CategoriesController#index as JSON
+  Rendering categories/index.json.jbuilder
+  [1m[36mCategory Load (0.4ms)[0m  [1m[34mSELECT "categories".* FROM "categories" ORDER BY "categories"."title" ASC[0m
+  ↳ app/views/categories/index.json.jbuilder:1
+  Rendered categories/index.json.jbuilder (Duration: 3.7ms | Allocations: 486)
+Completed 200 OK in 7ms (Views: 5.2ms | ActiveRecord: 0.4ms | Allocations: 705)
+
+
+Started GET "/api/categories" for ::1 at 2021-10-27 19:02:28 -0300
+Processing by CategoriesController#index as JSON
+  Rendering categories/index.json.jbuilder
+  [1m[36mCategory Load (0.4ms)[0m  [1m[34mSELECT "categories".* FROM "categories" ORDER BY "categories"."title" ASC[0m
+  ↳ app/views/categories/index.json.jbuilder:1
+  Rendered categories/index.json.jbuilder (Duration: 5.5ms | Allocations: 486)
+Completed 200 OK in 8ms (Views: 7.1ms | ActiveRecord: 0.4ms | Allocations: 705)
+
+
+Started GET "/api/categories" for ::1 at 2021-10-27 19:04:43 -0300
+Processing by CategoriesController#index as JSON
+  Rendering categories/index.json.jbuilder
+  [1m[36mCategory Load (0.5ms)[0m  [1m[34mSELECT "categories".* FROM "categories" ORDER BY "categories"."title" ASC[0m
+  ↳ app/views/categories/index.json.jbuilder:1
+  Rendered categories/index.json.jbuilder (Duration: 7.0ms | Allocations: 486)
+Completed 200 OK in 10ms (Views: 8.7ms | ActiveRecord: 0.5ms | Allocations: 705)
+
+
+Started GET "/api/categories" for ::1 at 2021-10-27 19:12:08 -0300
+Processing by CategoriesController#index as JSON
+  [1m[35m (0.1ms)[0m  [1m[34mSELECT sqlite_version(*)[0m
+  ↳ app/controllers/categories_controller.rb:3:in `index'
+  Rendering categories/index.json.jbuilder
+  [1m[36mCategory Load (0.7ms)[0m  [1m[34mSELECT "categories".* FROM "categories" ORDER BY "categories"."title" ASC[0m
+  ↳ app/views/categories/index.json.jbuilder:1
+  Rendered categories/index.json.jbuilder (Duration: 2.9ms | Allocations: 500)
+Completed 200 OK in 12ms (Views: 4.8ms | ActiveRecord: 2.3ms | Allocations: 1170)
+
+
+Started GET "/api/categories" for ::1 at 2021-10-27 19:12:16 -0300
+Processing by CategoriesController#index as JSON
+  Rendering categories/index.json.jbuilder
+  [1m[36mCategory Load (0.5ms)[0m  [1m[34mSELECT "categories".* FROM "categories" ORDER BY "categories"."title" ASC[0m
+  ↳ app/views/categories/index.json.jbuilder:1
+  Rendered categories/index.json.jbuilder (Duration: 2.6ms | Allocations: 486)
+Completed 200 OK in 4ms (Views: 3.3ms | ActiveRecord: 0.5ms | Allocations: 705)
+
+
+Started GET "/api/categories" for ::1 at 2021-10-27 19:14:42 -0300
+Processing by CategoriesController#index as JSON
+  Rendering categories/index.json.jbuilder
+  [1m[36mCategory Load (0.4ms)[0m  [1m[34mSELECT "categories".* FROM "categories" ORDER BY "categories"."title" ASC[0m
+  ↳ app/views/categories/index.json.jbuilder:1
+  Rendered categories/index.json.jbuilder (Duration: 5.6ms | Allocations: 486)
+Completed 200 OK in 12ms (Views: 10.5ms | ActiveRecord: 0.4ms | Allocations: 705)
+
+
